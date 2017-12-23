@@ -96,7 +96,7 @@ $(function() {
 
     let listView = {
         init : function () {
-            this.catElem = document.getElementsByClassName('cat-container');
+            this.catElem = $('.cat-container');
             this.listItems = $('.list-item');
             this.catListElem = $('#cat-list');
             this.addCatButton = $('#add-cat');
