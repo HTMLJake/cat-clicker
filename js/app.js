@@ -1,5 +1,6 @@
 $(function() {
     let model = {
+        curCat : null,
         catArr : [
             {
                 name: 'Simon',
@@ -26,48 +27,169 @@ $(function() {
     };
 
     let octopus = {
-        curCat : model.catArr[0],
-        changeCat(index) {
-            this.curCat = model.catArr[index];
-            catView.changeCat(this.curCat.name, this.curCat.imgURL);
-            catView.updateClick(this.curCat.index);
+        init : function() {
+            this.setCurCat(0);
+            listView.init();
+            catView.init();
+            modalView.init();
         },
 
-        init : function() {
-            listView.createList();
-            catView.changeCat(this.curCat.name, this.curCat.imgURL);
-            catView.updateClick(this.curCat.index);
-            catView.setClickEvent();
+        getCurCat : function() {
+            return model.curCat;
+        },
+
+        getCatArr : function() {
+            return model.catArr;
+        },
+        
+        incrementCounter : function() {
+            model.curCat.index++;
+            catView.render();
+        },
+
+        setCurCat : function (index) {
+            model.curCat = model.catArr[index];
+        },
+
+        addNewCat : function(name, url) {
+            model.catArr.push(
+            {
+                name: name,
+                index: 0,
+                imgURL: url
+            })
+            listView.render();
+            modalView.render();
+        },
+
+        editCat : function(catIndex, name, url) {
+            if(url){
+                model.catArr[catIndex].imgURL = url;
+            }
+            model.catArr[catIndex].name = name;
+            catView.render();
+            listView.render();
+            modalView.render();
         }
 
     };
 
     let catView = {
-        updateClick : function(clicks) {
-            $('.clicks').text(clicks);
-        },
-        changeCat : function(name, url) {
-            $('.name').text(name);
-            $('.clickable').css('background-image', `url('${url}')`);
-        },
-        setClickEvent : function() {
-            $('.clickable').click(function() {
-                octopus.curCat.index++;
-                $('.clicks').text(octopus.curCat.index);
+        init : function () {
+            this.catElem = $('#cat-container');
+            this.catNameElem = $('#cat-name');
+            this.catImgElem = $('#cat-img');
+            this.catClicksElem = $('#cat-clicks');
+
+            this.catImgElem.click(function() {
+                octopus.incrementCounter();
             });
+            this.render();
+        },
+        render : function() {
+            let currentCat = octopus.getCurCat();
+            this.catNameElem.text(currentCat.name);
+            this.catImgElem.css('background-image', `url('${currentCat.imgURL}')`);
+            this.catClicksElem.text(currentCat.index);
         }
     }
 
     let listView = {
-        createList : function () {
-            for (const cat of model.catArr) {
-                $('.catList').append(`<li><button class="list-item">${cat.name}</button></li>`);   
+        init : function () {
+            this.catElem = document.getElementsByClassName('cat-container');
+            this.listItems = $('.list-item');
+            this.catListElem = $('#cat-list');
+            this.addCatButton = $('#add-cat');
+            this.editCatButton = $('#edit-cat');
+            
+            this.addCatButton.click(function() {
+                modalView.addNameInput.val('');
+                modalView.addUrlInput.val('');
+                modalView.addCatModalElem.show();
+            });
+
+            this.editCatButton.click(function() {
+                modalView.editNameInput.val('');
+                modalView.editUrlInput.val('');
+                modalView.editCatModalElem.show();
+            });
+            
+            this.render();
+
+        },
+        render : function() {
+            this.catListElem.html('');
+            let cats = octopus.getCatArr();
+            for (const cat of cats) {
+                this.catListElem.append(`<li><button class="list-item">${cat.name}</button></li>`);   
             }
             $('.list-item').click(function() {
-                octopus.changeCat($('.list-item').index(this));
+                let selected = $('.list-item').index(this);
+                octopus.setCurCat(selected);
+                catView.render();
             });
         }
     };
+
+    let modalView = {
+        init : function() {
+            /* Modal Elements */
+            this.addCatModalElem = $('#add-cat-modal');
+            this.editCatModalElem = $('#edit-cat-modal');
+            /* Add Input Elements */
+            this.addNameInput = $('#add-name-input');
+            this.addUrlInput = $('#add-img-input');
+            /* Edit Input Elements */
+            this.editNameInput = $('#edit-name-input');
+            this.editUrlInput = $('#edit-img-input');
+            this.catSelection = $('#cat-select');
+            /* Buttons */
+            this.submitButton = $('.submit');
+            this.editCatButton = $('.edit');
+            this.cancelButton = $('.cancel');
+
+            this.submitButton.click(function(){
+                let name = modalView.addNameInput.val();
+                let url = modalView.addUrlInput.val();
+                if(name && url){
+                    octopus.addNewCat(name, url);
+                }
+            });
+
+            this.editCatButton.click(function() {
+                let name = modalView.editNameInput.val();
+                let url = modalView.editUrlInput.val();
+                let selected = modalView.catSelection[0].selectedIndex;
+                if(url) {
+                    octopus.editCat(selected, name, url);
+                } else if (name){
+                    console.log(selected);
+                    octopus.editCat(selected, name);
+                } else {
+                    alert("Missing Name!");
+                }
+            });
+
+            this.cancelButton.click(function() {
+                modalView.addCatModalElem.hide();
+                modalView.editCatModalElem.hide();
+            });
+
+            this.render();
+        },
+
+        render : function() {
+            this.addCatModalElem.hide();
+            this.editCatModalElem.hide();
+
+            this.catSelection.html('');
+            let cats = octopus.getCatArr();
+            for (const cat of cats) {
+                this.catSelection.append(`<option>${cat.name}</option>`);   
+            }
+
+        }
+    }
 
     octopus.init();
 });

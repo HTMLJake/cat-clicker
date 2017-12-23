@@ -11,28 +11,50 @@
     <h1>CAT CLICKER</h1>
     <section>
         <div class="container">
-            <div>
-                <ul class="catList">
-                    
+            <div id="list-container">
+                <div>
+                    <button id="add-cat">Add Cat</button>
+                    <button id="edit-cat">Edit Cat</button>
+                </div>
+                <ul id="cat-list">
                 </ul>
             </div>
-            <div class="cat">
-                <h2 class="name">Cat Name</h2>
-                <div class="clickable"></div>
+            <div id="cat-container">
+                <h2 id="cat-name">Cat Name</h2>
+                <div id="cat-img"></div>
                 <p>Clicks:
-                    <span class="clicks">0</span>
+                    <span id="cat-clicks">0</span>
                 </p>
             </div>
         </div>
     </section>
+
+    <div id="add-cat-modal" class="modal">
+        <span>Name:</span>
+        <input type="text" id="add-name-input" placeholder="Cat Name" title="Name:">
+        <span>URL:</span>
+        <input type="url" name="Img URL" id="add-img-input" placeholder="http://www.example.com" required>
+        <div>
+            <button class="submit">Add Cat</button>
+            <button type="cancel" class="cancel">Cancel</button>
+        </div>
+    </div>
+
+    <div id="edit-cat-modal" class="modal">
+            <span>Select Cat: </span>
+            <select name="cats" id="cat-select">
+                <option>Select One</option>
+            </select>
+            <span>Name:</span>
+            <input type="text" id="edit-name-input" placeholder="Cat Name" title="Name:">
+            <span>URL:</span>
+            <input type="url" name="Img URL" id="edit-img-input" placeholder="http://www.example.com">
+            <div>
+                <button class="edit">Edit Cat</button>
+                <button type="cancel" class="cancel">Cancel</button>
+            </div>
+        </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
-
-
-<!-- Cat Images
-    https://www.rd.com/wp-content/uploads/2016/04/01-cat-wants-to-tell-you-laptop.jpg
-
-    http://sites.psu.edu/siowfa15/wp-content/uploads/sites/29639/2015/10/cat.jpg
--->
