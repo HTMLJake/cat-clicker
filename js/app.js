@@ -59,9 +59,33 @@ $(function() {
     }
 
     let listView = {
-        createList : function () {
-            for (const cat of model.catArr) {
-                $('.catList').append(`<li><button class="list-item">${cat.name}</button></li>`);   
+        init : function () {
+            this.catElem = $('.cat-container');
+            this.listItems = $('.list-item');
+            this.catListElem = $('#cat-list');
+            this.addCatButton = $('#add-cat');
+            this.editCatButton = $('#edit-cat');
+            
+            this.addCatButton.click(function() {
+                modalView.addNameInput.val('');
+                modalView.addUrlInput.val('');
+                modalView.addCatModalElem.show();
+            });
+
+            this.editCatButton.click(function() {
+                modalView.editNameInput.val('');
+                modalView.editUrlInput.val('');
+                modalView.editCatModalElem.show();
+            });
+            
+            this.render();
+
+        },
+        render : function() {
+            this.catListElem.html('');
+            let cats = octopus.getCatArr();
+            for (const cat of cats) {
+                this.catListElem.append(`<li><button class="list-item">${cat.name}</button></li>`);   
             }
             $('.list-item').click(function() {
                 octopus.changeCat($('.list-item').index(this));
